@@ -1,4 +1,4 @@
-# s3trigger [![Documentation](https://godoc.org/github.com/claranet/s3trigger?status.svg)](http://godoc.org/github.com/claranet/s3trigger>)
+# s3trigger [![Documentation](https://godoc.org/github.com/claranet/s3trigger?status.svg)](http://godoc.org/github.com/claranet/s3trigger)
 
 This utiltiy simplifies re-invoking Lambda functions associated with a S3 bucket for all objects in the bucket. Rather
 than pulling down each file and reuploading it or manipulating the object metadata, the Lambda event payload is
