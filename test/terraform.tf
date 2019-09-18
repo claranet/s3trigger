@@ -17,9 +17,16 @@ resource "aws_s3_bucket" "proc" {
 }
 
 resource "aws_s3_bucket_object" "objs" {
-  count   = 25
+  count   = 20
   bucket  = "${aws_s3_bucket.unproc.id}"
   key     = "somefile0${count.index}"
+  content = "Test file ${count.index}"
+}
+
+resource "aws_s3_bucket_object" "prefixobjs" {
+  count   = 5
+  bucket  = "${aws_s3_bucket.unproc.id}"
+  key     = "nested/somefile0${count.index}"
   content = "Test file ${count.index}"
 }
 

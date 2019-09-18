@@ -11,6 +11,7 @@ import (
 
 func main() {
 	var bucket = flag.String("bucket", "", "Target S3 bucket (required)")
+	var prefix = flag.String("prefix", "", "Only trigger for keys with matching prefix")
 
 	flag.Parse()
 
@@ -20,7 +21,7 @@ func main() {
 		os.Exit(2)
 	}
 
-	if err := s3trigger.TriggerLambdasForBucket(*bucket); err != nil {
+	if err := s3trigger.TriggerLambdasForBucketWithPrefix(*bucket, *prefix); err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 			log.Fatalf("triggering lambdas for bucket %s failed: %s", *bucket, awsErr.Message())
     	} else {

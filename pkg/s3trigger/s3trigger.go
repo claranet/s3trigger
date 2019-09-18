@@ -19,12 +19,18 @@ var lsession = lambda.New(session.New(), aws.NewConfig())
 //TriggerLambdasForBucket invokes all lambda functions associated with
 //bucket for each key contained in the bucket.
 func TriggerLambdasForBucket (bucket string) error {
+	return TriggerLambdasForBucketWithPrefix(bucket, "")
+}
+
+//TriggerLambdasForBucketWithPrefix invokes all lambda functions associated with
+//bucket for each key starting with prefix in the bucket.
+func TriggerLambdasForBucketWithPrefix (bucket string, prefix string) error {
 	arns, err := GetLambdaArnsForBucket(bucket)
 	if err != nil {
 		return fmt.Errorf("get arns: %v", err)
 	}
 
-	return TriggerLambdaArnsForBucket(bucket, arns)
+	return TriggerLambdaArnsForBucketWithPrefix(bucket, prefix, arns)
 }
 
 //GetLambdaArnsForBucket returns a list of lambda ARNs associated with bucket
@@ -49,11 +55,23 @@ func GetLambdaArnsForBucket (bucket string) ([]*string, error) {
 //TriggerLambdaArnsForBucket invokes each lambda ARN for each key contained in bucket
 //in batches of 10 (currently the maximum in AWS)
 func TriggerLambdaArnsForBucket(bucket string, arns []*string) error {
-	errs := new(multierror.Error)
+	return TriggerLambdaArnsForBucketWithPrefix(bucket, "", arns)
+}
 
+//TriggerLambdaArnsForBucketWithPrefix invokes each lambda ARN for each key staring with the
+//prefix and contained in bucket in batches of 10 (currently the maximum in AWS)
+func TriggerLambdaArnsForBucketWithPrefix(bucket string, prefix string, arns []*string) error {
 	listObjs := &s3.ListObjectsInput{
 		Bucket: aws.String(bucket),
+		Prefix: aws.String(prefix),
 	}
+
+	return triggerLambdaArnsForListObjectsInput(bucket, arns, listObjs)
+}
+
+func triggerLambdaArnsForListObjectsInput(bucket string, arns []*string, listObjs *s3.ListObjectsInput) error {
+
+	errs := new(multierror.Error)
 
 	err := s3session.ListObjectsPages(listObjs, func(page *s3.ListObjectsOutput, lastPage bool) bool {
 		var records []events.S3EventRecord

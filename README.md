@@ -44,6 +44,10 @@ s3trigger -bucket my-bucket
 
   S3 bucket name to trigger Lambda functions for.
 
+- `-prefix` string
+
+  Only trigger for keys beginning with the prefix.
+
 ### Developing & Testing
 
 Instead of using `go get`, you can clone this repository and use the `Makefile`. The following targets are available:
